@@ -40,15 +40,15 @@ docker ps --filter name=medusa-postgres --format "{{.Names}} {{.Status}}"
 docker start medusa-postgres
 
 # 2. Backend + storefront (dos terminales, o una sola con el comando de abajo)
-cd C:\dev\tienda-ve
+cd C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut
 pnpm dev
 ```
 
 Si `pnpm dev` desde la raíz falla, levanta cada app por separado:
 
 ```powershell
-cd C:\dev\tienda-ve\apps\backend;    pnpm dev   # :9000
-cd C:\dev\tienda-ve\apps\storefront; pnpm dev   # :8000
+cd C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut\apps\backend;    pnpm dev   # :9000
+cd C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut\apps\storefront; pnpm dev   # :8000
 ```
 
 Para apagar: `Ctrl + C` en cada terminal y `docker stop medusa-postgres` si no lo necesitas.
@@ -78,17 +78,24 @@ Hay dos repositorios distintos y conviene no mezclarlos:
 un proyecto que consume `@medusajs/*` como dependencias. Por eso:
 
 - `C:\Users\migue\OneDrive\Documents\GitHub\medusa` queda intacto como referencia del framework.
-- `C:\dev\tienda-ve` es tu proyecto, y ese es el que haces fork/push a tu cuenta de GitHub.
+- `C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut` es tu proyecto, y ese es el que haces fork/push a tu cuenta de GitHub.
 
 Si en el futuro necesitas parchar el core, ese es el único caso donde tiene sentido forkear
 `medusajs/medusa` y enlazarlo con `resolutions`/`overrides` o publicando tu propio paquete.
 
-### Por qué el proyecto NO está dentro de OneDrive
+### Sobre OneDrive
 
-Yarn/pnpm crean decenas de miles de archivos con hardlinks en `node_modules`. OneDrive intenta
-sincronizarlos y produce `EPERM`, archivos bloqueados, builds que fallan de forma aleatoria y
-consumo de CPU constante. Por eso el proyecto vive en `C:\dev\tienda-ve`.
-GitHub Desktop / `gh` / `git` funcionan igual desde cualquier ruta.
+El workspace vive dentro de OneDrive para tenerlo junto al resto de repositorios de GitHub.
+El problema es que `node_modules` tiene decenas de miles de archivos y OneDrive intenta
+sincronizarlos: eso produce `EPERM`, archivos bloqueados, builds que fallan de forma aleatoria
+y consumo de CPU.
+
+Recomendaciones mientras se desarrolla:
+
+- Pausa OneDrive (`OneDrive > Pausar sincronización`) antes de un `pnpm install` o un build grande.
+- Si aparecen errores de archivos bloqueados, mueve el proyecto fuera de OneDrive (por ejemplo
+  `C:\dev\medusa-norkut`). `git` y `gh` funcionan igual desde cualquier ruta.
+- Nunca sincronices `node_modules`, `.next` ni `.medusa`.
 
 ---
 
@@ -156,7 +163,7 @@ docker logs -f medusa-postgres   # ver logs
 ## 2. Estructura del proyecto
 
 ```text
-C:\dev\tienda-ve\
+C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut\
 ├── apps\
 │   ├── backend\      # Medusa: API en :9000, admin en :9000/app
 │   │   ├── src\api\          # rutas HTTP custom
@@ -213,7 +220,7 @@ Dinamarca). Si aún no existe la región `ve`, el storefront falla al cargar el 
 ## 4. Instalación de dependencias
 
 ```powershell
-cd C:\dev\tienda-ve
+cd C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut
 pnpm install
 ```
 
@@ -227,7 +234,7 @@ Si se interrumpe, se puede volver a lanzar: pnpm reutiliza lo descargado (store 
 ### 5.1 Migraciones + seed inicial
 
 ```powershell
-cd C:\dev\tienda-ve\apps\backend
+cd C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut\apps\backend
 pnpm medusa db:migrate
 ```
 
@@ -258,7 +265,7 @@ Entra al admin y ve a **Settings > Publishable API Key**. Copia la key `pk_...` 
 ### 5.4 Levantar el storefront
 
 ```powershell
-cd C:\dev\tienda-ve\apps\storefront
+cd C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut\apps\storefront
 pnpm dev
 ```
 
@@ -272,7 +279,7 @@ Storefront: <http://localhost:8000>
 ### 5.5 Levantar todo junto
 
 ```powershell
-cd C:\dev\tienda-ve
+cd C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut
 pnpm dev        # turbo levanta backend + storefront
 ```
 
@@ -285,7 +292,7 @@ Detener con `Ctrl + C`.
 El repo clonado apunta a `medusajs/dtc-starter`. Lo correcto es:
 
 ```powershell
-cd C:\dev\tienda-ve
+cd C:\Users\migue\OneDrive\Documents\GitHub\medusa-norkut
 
 # 1) Quitar el remoto del template
 git remote rename origin template
