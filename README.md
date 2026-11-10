@@ -1,188 +1,253 @@
-<p align="center">
-  <a href="https://www.medusajs.com">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/59018053/229103275-b5e482bb-4601-46e6-8142-244f531cebdb.svg">
-    <source media="(prefers-color-scheme: light)" srcset="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    <img alt="Medusa logo" src="https://user-images.githubusercontent.com/59018053/229103726-e5b529a3-9b3f-4970-8a1f-c6af37f087bf.svg">
-    </picture>
-  </a>
-</p>
-<h1 align="center">
-  Medusa DTC Starter
-</h1>
+# Medusa Norkut
 
-<h4 align="center">
-  <a href="https://docs.medusajs.com">Documentation</a> |
-  <a href="https://www.medusajs.com">Website</a>
-</h4>
+E-commerce construido sobre **Medusa v2** y **Next.js**, pensado para operar en el mercado
+venezolano. Este repositorio es el espacio de trabajo del proyecto: aquí viven el backend
+(API + admin), el storefront, los módulos de pago/envío y las personalizaciones locales.
 
-<p align="center">
-  Building blocks for digital commerce
-</p>
-<p align="center">
-  <a href="https://github.com/medusajs/medusa/blob/develop/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="Medusa is released under the MIT license." />
-  </a>
-  <a href="https://circleci.com/gh/medusajs/medusa">
-    <img src="https://circleci.com/gh/medusajs/medusa.svg?style=shield" alt="Current CircleCI build status." />
-  </a>
-  <a href="https://github.com/medusajs/medusa/blob/develop/CONTRIBUTING.md">
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat" alt="PRs welcome!" />
-  </a>
-    <a href="https://www.producthunt.com/posts/medusa"><img src="https://img.shields.io/badge/Product%20Hunt-%231%20Product%20of%20the%20Day-%23DA552E" alt="Product Hunt"></a>
-  <a href="https://discord.gg/xpCwq3Kfn8">
-    <img src="https://img.shields.io/badge/chat-on%20discord-7289DA.svg" alt="Discord Chat" />
-  </a>
-  <a href="https://twitter.com/intent/follow?screen_name=medusajs">
-    <img src="https://img.shields.io/twitter/follow/medusajs.svg?label=Follow%20@medusajs" alt="Follow @medusajs" />
-  </a>
-</p>
+> Base: [`medusajs/dtc-starter`](https://github.com/medusajs/dtc-starter) con Medusa `2.22.6`.
+> El monorepo del framework (`medusajs/medusa`) es un repositorio distinto y no se toca desde aquí.
 
-# Medusa DTC Starter
+---
 
-A production-ready monorepo starter for direct-to-consumer ecommerce stores powered by Medusa and Next.js. Includes a fully featured storefront with product browsing, cart, checkout, customer accounts, and order management.
+## Qué incluye
 
-## Features
+- **Backend Medusa** (`apps/backend`): API REST, motor de workflows, módulos de comercio y
+  dashboard de administración.
+- **Storefront Next.js** (`apps/storefront`): catálogo, carrito, checkout, cuenta de cliente e
+  historial de pedidos.
+- **Seed inicial**: tienda, canal de ventas, publishable key, región, impuestos, bodega, envíos,
+  categorías y productos de demostración.
+- **Base para Venezuela**: país `ve`, región `Venezuela`, monedas `usd`/`ves`, almacén en Caracas.
+  El detalle y el roadmap están en [`GUIA-VENEZUELA.md`](./GUIA-VENEZUELA.md).
 
-- All of [Medusa's commerce features](https://docs.medusajs.com/resources/commerce-modules)
-- Multi-region support with automatic country detection
-- Product catalog with variant selection
-- Cart with promotion codes
-- Multi-step checkout with shipping and payment
-- Customer accounts with order history and address management
-- Order transfer between accounts
+| Componente | Puerto |
+| --- | --- |
+| Storefront | `http://localhost:8000/ve` |
+| API Medusa | `http://localhost:9000` |
+| Admin | `http://localhost:9000/app` |
+| PostgreSQL | `localhost:5432` |
 
-## Getting Started
+---
 
-### Deploy with Medusa Cloud
+## Requisitos
 
-The fastest way to get started is deploying with [Medusa Cloud](https://cloud.medusajs.com):
+| Herramienta | Versión | Nota |
+| --- | --- | --- |
+| Node.js | `>= 22.22` (recomendado 24 LTS) | El storefront Next.js no soporta Node 26 |
+| pnpm | `10.11.1` | Se activa con Corepack |
+| PostgreSQL | `>= 15` (recomendado 16) | Docker es la vía más simple |
+| Git | cualquiera reciente | |
 
-1. [Create a Medusa Cloud account](https://cloud.medusajs.com)
-2. Deploy this starter directly from your dashboard
+### Node y pnpm
 
-### Local Installation
+```powershell
+nvm install 24
+nvm use 24
+corepack enable pnpm
+corepack prepare pnpm@10.11.1 --activate
+```
 
-> **Prerequisites:**
->
-> - [Node.js](https://nodejs.org/) v22.22+
-> - [PostgreSQL](https://www.postgresql.org/) v15+
-> - [pnpm](https://pnpm.io/) v10+
+> Cada cambio de versión de Node elimina el shim de pnpm/yarn. Si `pnpm` deja de existir:
+> `corepack enable pnpm`.
 
-1. Clone the repository and install dependencies:
+### PostgreSQL con Docker
 
-```bash
-git clone https://github.com/medusajs/dtc-starter.git
-cd dtc-starter
+```powershell
+docker run -d --name medusa-postgres `
+  -e POSTGRES_USER=medusa `
+  -e POSTGRES_PASSWORD=medusa `
+  -e POSTGRES_DB=medusa_norkut `
+  -p 5432:5432 `
+  -v medusa_norkut_pgdata:/var/lib/postgresql/data `
+  --restart unless-stopped `
+  postgres:16-alpine
+```
+
+---
+
+## Puesta en marcha
+
+### 1. Dependencias
+
+```powershell
 pnpm install
 ```
 
-2. Set up environment variables for the backend:
+### 2. Variables de entorno del backend
 
-```bash
-cp apps/backend/.env.template apps/backend/.env
+Crea `apps/backend/.env` a partir de `apps/backend/.env.template`:
+
+```dotenv
+STORE_CORS=http://localhost:8000,https://docs.medusajs.com
+ADMIN_CORS=http://localhost:5173,http://localhost:9000,https://docs.medusajs.com
+AUTH_CORS=http://localhost:5173,http://localhost:9000,https://docs.medusajs.com
+JWT_SECRET=<cadena-aleatoria-larga>
+COOKIE_SECRET=<otra-cadena-aleatoria>
+DATABASE_URL=postgres://medusa:medusa@localhost:5432/medusa_norkut
+DB_NAME=medusa_norkut
 ```
 
-3. Set the database URL in `apps/backend/.env`:
+Genera los secretos, por ejemplo:
 
-```bash
-# Replace with actual database URL, make sure the database exists.
-DATABASE_URL=postgres://postgres:@localhost:5432/medusa-dtc-starter
+```powershell
+-join ((48..57)+(65..90)+(97..122) | Get-Random -Count 40 | ForEach-Object {[char]$_})
 ```
 
-4. Run migrations (this also seeds initial store data):
+`REDIS_URL` es opcional en desarrollo: sin ella Medusa usa un motor de workflows en memoria.
+En producción con varios procesos sí es necesaria (`@medusajs/workflow-engine-redis`).
 
-```bash
+### 3. Migraciones y datos iniciales
+
+```powershell
 cd apps/backend
 pnpm medusa db:migrate
 ```
 
-5. Add admin user:
+Crea el esquema y ejecuta los scripts de `src/migration-scripts/`, que siembran la tienda,
+la región, los impuestos, la bodega, las opciones de envío y el catálogo demo.
 
-```bash
+### 4. Usuario administrador
+
+```powershell
 cd apps/backend
-pnpm medusa user -e admin@test.com -p supersecret
+pnpm medusa user -e admin@norkut.local -p "TuPasswordSegura123!"
 ```
 
-6. Start Medusa backend:
+### 5. Backend
 
-```bash
+```powershell
 cd apps/backend
 pnpm dev
 ```
 
-7. Open the admin dashboard at `localhost:9000/app` and log in. Retrieve your publishable API key at Settings > Publishable API key.
+Abre `http://localhost:9000/app`, inicia sesión y copia la **publishable API key** desde
+**Settings > Publishable API Key**.
 
-8. Set up environment variables for the storefront:
+### 6. Storefront
 
-```bash
-cp apps/storefront/.env.template apps/storefront/.env.local
+Crea `apps/storefront/.env.local` a partir de `apps/storefront/.env.template`:
+
+```dotenv
+NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_...
+NEXT_PUBLIC_MEDUSA_BACKEND_URL=http://localhost:9000
+NEXT_PUBLIC_DEFAULT_REGION=ve
+NEXT_PUBLIC_BASE_URL=http://localhost:8000
+NODE_ENV=development
 ```
 
-9. Update `apps/storefront/.env.local` with your Medusa publishable API key:
-
-```bash
-NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_6c3...
-```
-
-10. Start the storefront:
-
-```bash
+```powershell
 cd apps/storefront
 pnpm dev
 ```
 
-The storefront runs on `http://localhost:8000`.
+Storefront en `http://localhost:8000/ve`.
 
-You can also start both the backend and storefront from the root:
+> El home lista productos **por colección**. Si aparece vacío, crea una colección en
+> **Products > Collections**, asígnale productos o usa la colección `Destacados`.
 
-```bash
-pnpm dev
+### 7. Levantar todo junto
+
+```powershell
+pnpm dev        # turbo: backend + storefront
 ```
 
-## Project Structure
+---
+
+## Comandos habituales
+
+```powershell
+pnpm install                 # instalar dependencias
+pnpm dev                     # backend + storefront
+pnpm build                   # build de producción
+pnpm lint                    # lint del monorepo
+
+cd apps/backend
+pnpm medusa db:migrate       # migraciones + seed
+pnpm medusa user -e a@b.co -p "clave"
+pnpm medusa develop          # solo backend en modo dev
+pnpm medusa build            # build del backend
+pnpm medusa start            # backend compilado
+
+cd apps/storefront
+pnpm dev                     # solo storefront
+pnpm build                   # build de Next
+```
+
+Docker:
+
+```powershell
+docker start medusa-postgres
+docker stop medusa-postgres
+docker logs -f medusa-postgres
+```
+
+---
+
+## Estructura
 
 ```text
 apps/
-├── backend/      # Medusa application: API routes, workflows, modules, admin extensions
-└── storefront/   # Next.js storefront (optional)
+├── backend/
+│   ├── src/api/                # rutas HTTP custom
+│   ├── src/modules/            # módulos custom (pagos, envíos, etc.)
+│   ├── src/workflows/          # workflows y steps
+│   ├── src/links/              # module links
+│   ├── src/subscribers/        # eventos del sistema
+│   ├── src/jobs/               # tareas programadas (ej. tasa BCV)
+│   ├── src/admin/              # extensiones del dashboard
+│   └── src/migration-scripts/  # seed y scripts de datos
+└── storefront/
+    └── src/
+        ├── app/[countryCode]/  # rutas por país
+        ├── modules/            # componentes por dominio
+        └── lib/data/           # acceso a la Store API
 ```
 
-## Building with AI Agents
+---
 
-This repo is set up for AI coding agents such as Claude Code, Cursor, and Codex:
+## Adaptación a Venezuela
 
-- [`AGENTS.md`](./AGENTS.md) holds the project's commands, conventions, and off-limits paths. `CLAUDE.md` points to it.
-- Installed `@medusajs/*` packages ship their own `AGENTS.md` in `node_modules`, documenting the API of the exact version you have installed.
-- Install the [Medusa agent skills](https://docs.medusajs.com/learn/introduction/build-with-llms-ai/agentic-skills) and [MCP server](https://docs.medusajs.com/learn/introduction/build-with-llms-ai/mcp-server) for documentation-backed answers:
+Estado actual y siguientes pasos en [`GUIA-VENEZUELA.md`](./GUIA-VENEZUELA.md).
 
-```bash
-claude mcp add --transport http medusa https://docs.medusajs.com/mcp
-```
+Resumen:
 
-- If you deploy on [Medusa Cloud](https://cloud.medusajs.com), add the Medusa Cloud MCP server so your agent can inspect deployments, build and runtime logs, environment variables, and your store's data. It authenticates with your Medusa Cloud account:
+- [x] Región `Venezuela`, país `ve`, monedas `usd` (base) + `ves`
+- [x] Almacén y zona de envío en Caracas/Venezuela
+- [ ] IVA 16% como tasa por defecto
+- [ ] Métodos de pago locales (Pago Móvil, transferencia, Zelle, USDT) sobre el proveedor `system`
+- [ ] Tarifas de envío por estado (Zoom, MRW, Liberty Express)
+- [ ] Cédula/RIF y validación de teléfono `+58`
+- [ ] Job diario de tasa BCV para precios en VES
+- [ ] Integración fiscal (SENIAT) en `order.placed`
 
-```bash
-claude mcp add --transport http medusa-cloud https://cloud.medusajs.com/mcp
-```
+---
 
-## Configuration
+## Problemas comunes
 
-The storefront is configured via environment variables in `apps/storefront/.env.local`:
+| Síntoma | Solución |
+| --- | --- |
+| `pnpm`/`yarn` no existe | `corepack enable pnpm` |
+| `ECONNREFUSED 5432` | `docker start medusa-postgres` |
+| `EADDRINUSE :9000` / `:8000` | `Get-NetTCPConnection -LocalPort 9000` y terminar el PID |
+| Home sin productos | crear una colección y asignarle productos |
+| Build roto por `EPERM` | el proyecto debe vivir fuera de OneDrive |
+| `path too long` | `git config --system core.longpaths true` |
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY` | Publishable API key from your Medusa backend | — |
-| `NEXT_PUBLIC_MEDUSA_BACKEND_URL` | URL of your Medusa backend | `http://localhost:9000` |
-| `NEXT_PUBLIC_DEFAULT_REGION` | Default region country code | `dk` |
-| `NEXT_PUBLIC_BASE_URL` | Base URL of the storefront | `https://localhost:8000` |
-| `NEXT_PUBLIC_STRIPE_KEY` | Stripe publishable key (optional) | — |
-| `NEXT_PUBLIC_ADYEN_CLIENT_KEY` | Adyen client key (optional), when the Adyen payment provider is registered in the backend | — |
-| `NEXT_PUBLIC_ADYEN_ENVIRONMENT` | Adyen environment, `test` or `live` (optional) | `test` |
+---
 
-## Resources
+## Documentación
 
-- [Medusa Documentation](https://docs.medusajs.com)
-- [Medusa Cloud](https://cloud.medusajs.com)
-- [Build with AI agents](https://docs.medusajs.com/learn/introduction/build-with-llms-ai)
-- [Medusa docs for LLMs (`llms.txt`)](https://docs.medusajs.com/llms.txt)
+- Medusa: <https://docs.medusajs.com>
+- Instalación: <https://docs.medusajs.com/learn/installation.md>
+- Módulos: <https://docs.medusajs.com/learn/fundamentals/modules.md>
+- Workflows: <https://docs.medusajs.com/learn/fundamentals/workflows.md>
+- Payment providers: <https://docs.medusajs.com/resources/commerce-modules/payment/payment-provider.md>
+- Índice para LLMs: <https://docs.medusajs.com/llms.txt>
+
+---
+
+## Convenciones
+
+- Ramas por tipo: `feat/`, `fix/`, `chore/`, `docs/`.
+- Nunca commitear `.env`, `.env.local` ni secretos. Solo se versionan los `.env.template`.
+- Cambios de esquema en módulos: generar migración con la CLI del módulo, no a mano.

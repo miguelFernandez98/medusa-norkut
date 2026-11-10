@@ -5,7 +5,17 @@ packages:
 # pnpm 11+
 allowBuilds:
   "@medusajs/telemetry": true
+  "@swc/core": true
+  esbuild: true
+  msgpackr-extract: true
+  protobufjs: true
+  unrs-resolver: true
 
 # pnpm 10.x
 onlyBuiltDependencies:
   - "@medusajs/telemetry"
+  - "@swc/core"
+  - esbuild
+  - msgpackr-extract
+  - protobufjs
+  - unrs-resolver

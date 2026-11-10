@@ -36,7 +36,8 @@ export default async function initial_data_seed({
     ModuleRegistrationName.FULFILLMENT
   );
 
-  const countries = ["gb", "de", "dk", "se", "fr", "es", "it"];
+  // Venezuela es el unico pais soportado por la region inicial.
+  const countries = ["ve"];
 
   logger.info("Seeding store data...");
   const {
@@ -79,14 +80,14 @@ export default async function initial_data_seed({
     input: {
       stores: [
         {
-          name: "Default Store",
+          name: "Tienda Venezuela",
           supported_currencies: [
             {
-              currency_code: "eur",
+              currency_code: "usd",
               is_default: true,
             },
             {
-              currency_code: "usd",
+              currency_code: "ves",
               is_default: false,
             },
           ],
@@ -101,8 +102,8 @@ export default async function initial_data_seed({
     input: {
       regions: [
         {
-          name: "Europe",
-          currency_code: "eur",
+          name: "Venezuela",
+          currency_code: "usd",
           countries,
           payment_providers: ["pp_system_default"],
           metadata: DEFAULT_REGION_STORE_POLICIES,
@@ -129,11 +130,12 @@ export default async function initial_data_seed({
     input: {
       locations: [
         {
-          name: "European Warehouse",
+          name: "Almacen Caracas",
           address: {
-            city: "Copenhagen",
-            country_code: "DK",
-            address_1: "",
+            city: "Caracas",
+            country_code: "VE",
+            address_1: "Av. Principal",
+            province: "Distrito Capital",
           },
         },
       ],
@@ -159,38 +161,14 @@ export default async function initial_data_seed({
   const shippingProfile = shippingProfileResult[0];
 
   const fulfillmentSet = await fulfillmentModuleService.createFulfillmentSets({
-    name: "European Warehouse delivery",
+    name: "Almacen Caracas delivery",
     type: "shipping",
     service_zones: [
       {
-        name: "Europe",
+        name: "Venezuela",
         geo_zones: [
           {
-            country_code: "gb",
-            type: "country",
-          },
-          {
-            country_code: "de",
-            type: "country",
-          },
-          {
-            country_code: "dk",
-            type: "country",
-          },
-          {
-            country_code: "se",
-            type: "country",
-          },
-          {
-            country_code: "fr",
-            type: "country",
-          },
-          {
-            country_code: "es",
-            type: "country",
-          },
-          {
-            country_code: "it",
+            country_code: "ve",
             type: "country",
           },
         ],
