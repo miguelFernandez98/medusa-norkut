@@ -151,6 +151,19 @@ Storefront en `http://localhost:8000/ve`.
 pnpm dev        # turbo: backend + storefront
 ```
 
+### 8. Demo funcional (admin → ecommerce)
+
+Crea un producto publicado, con precio, inventario y colección, y prueba el
+flujo completo hasta la orden en el admin:
+
+```powershell
+cd apps/backend
+pnpm exec medusa exec ./src/scripts/seed-demo-product.ts
+```
+
+Producto: `Producto Demo Norkut` → `http://localhost:8000/ve/products/producto-demo-norkut`.
+El detalle del flujo y dónde agregar lógica de negocio está en [`DEMO.md`](./DEMO.md).
+
 ---
 
 ## Comandos habituales
